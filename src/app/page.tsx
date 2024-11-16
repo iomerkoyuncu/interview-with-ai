@@ -1,101 +1,209 @@
-import Image from "next/image";
+'use client';
+
+import React, { useState } from 'react';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Checkbox } from '../components/ui/checkbox';
+import { Textarea } from '../components/ui/textarea';
+import WordFadeIn from '@/components/ui/word-fade-in';
+import { ModeToggleGroup } from '../components/ui/toggleDarkMode';
+import { useTheme } from 'next-themes';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+	const { resolvedTheme } = useTheme();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+	const [interviewData, setInterviewData] = useState({
+		topic: '',
+		questionCount: 5,
+		multipleChoice: false,
+		openEnded: true,
+		evaluateAnswers: true,
+		showScore: true,
+		showAnswers: false,
+		timeLimit: false,
+		skipQuestions: false,
+	});
+	const [timeLimitValue, setTimeLimitValue] = useState(1);
+
+	return (
+		<div className='w-full flex flex-col justify-center items-center gap-8 mt-10'>
+			<ModeToggleGroup />
+			<WordFadeIn words='Interview With AI.' delay={0.5} />
+			<div className='max-w-[1280px] w-full flex gap-2 justify-center items-center '>
+				<div
+					className={`
+					p-4 w-[420px] flex flex-col justify-start items-start gap-4`}
+				>
+					<div className='flex flex-col justify-start items-start gap-2 w-full'>
+						<label htmlFor='interview-topic' className='font-bold'>
+							1. Interview Topic 👀
+						</label>
+
+						<Textarea
+							id='interview-topic'
+							placeholder='Write your main interview topic here.'
+							className='w-full'
+							rows={4}
+							value={interviewData.topic}
+							onChange={(e) => {
+								setInterviewData({
+									...interviewData,
+									topic: e.target.value,
+								});
+							}}
+						/>
+					</div>
+					<div className='w-full flex flex-col justify-start items-start gap-2'>
+						<label htmlFor='number-of-questions' className='font-bold'>
+							2. Number of Questions 🤔
+						</label>
+						<Input
+							id='number-of-questions'
+							placeholder='Question Count (Default: 5)'
+							className='w-full'
+							type='number'
+							defaultValue={5}
+							onChange={(e) => {
+								setInterviewData({
+									...interviewData,
+									questionCount: parseInt(e.target.value),
+								});
+							}}
+						/>
+					</div>
+					<div className='flex w-full flex-col gap-2 justify-start items-start'>
+						<span className='text-left w-full font-bold'>
+							3. Choose the type of questions. 👽
+						</span>
+						<div className='flex gap-2'>
+							<div className='flex justify-center items-center gap-2'>
+								<Checkbox
+									id='multiple-choice'
+									checked={interviewData.multipleChoice}
+									onCheckedChange={() => {
+										setInterviewData({
+											...interviewData,
+											multipleChoice: !interviewData.multipleChoice,
+										});
+									}}
+								></Checkbox>
+								<label htmlFor='multiple-choice'>Multiple Choice</label>
+							</div>
+							<div className='flex justify-center items-center gap-2'>
+								<Checkbox
+									id='open-ended'
+									checked={interviewData.openEnded}
+									onCheckedChange={() => {
+										setInterviewData({
+											...interviewData,
+											openEnded: !interviewData.openEnded,
+										});
+									}}
+								></Checkbox>
+								<label htmlFor='open-ended'>Open Ended</label>
+							</div>
+						</div>
+					</div>
+					<div className='flex w-full flex-col gap-2 justify-start items-start'>
+						<span className=' w-full font-bold'>3. Interview Options 🍀</span>
+						<div className='flex flex-col gap-2'>
+							<div className='flex justify-start items-center gap-2'>
+								<Checkbox
+									id='multiple-choice'
+									checked={interviewData.evaluateAnswers}
+									onCheckedChange={() => {
+										setInterviewData({
+											...interviewData,
+											evaluateAnswers: !interviewData.evaluateAnswers,
+										});
+									}}
+								></Checkbox>
+								<label htmlFor='multiple-choice'>Evaluate my answers. </label>
+							</div>
+							<div className='flex justify-start items-center gap-2'>
+								<Checkbox
+									id='showScore'
+									checked={interviewData.showScore}
+									onCheckedChange={() => {
+										setInterviewData({
+											...interviewData,
+											showScore: !interviewData.showScore,
+										});
+									}}
+								></Checkbox>
+								<label htmlFor='showScore'>
+									Show my total score at the end.
+								</label>
+							</div>
+							<div className='flex justify-start items-center gap-2'>
+								<Checkbox
+									id='showAnswers'
+									checked={interviewData.showAnswers}
+									onCheckedChange={() => {
+										setInterviewData({
+											...interviewData,
+											showAnswers: !interviewData.showAnswers,
+										});
+									}}
+								></Checkbox>
+								<label htmlFor='showAnswers'>Show answers while testing.</label>
+							</div>
+							<div className='flex justify-start items-center gap-2'>
+								<Checkbox
+									id='skipQuestions'
+									checked={interviewData.skipQuestions}
+									onCheckedChange={() => {
+										setInterviewData({
+											...interviewData,
+											skipQuestions: !interviewData.skipQuestions,
+										});
+									}}
+								></Checkbox>
+								<label htmlFor='skipQuestions'>
+									Allow going back to previous questions.
+								</label>
+							</div>
+							<div className='flex justify-start items-center gap-2'>
+								<Checkbox
+									id='timeLimit'
+									checked={interviewData.timeLimit}
+									onCheckedChange={() => {
+										setInterviewData({
+											...interviewData,
+											timeLimit: !interviewData.timeLimit,
+										});
+									}}
+								></Checkbox>
+								<label htmlFor='timeLimit'>Time limit per question</label>
+							</div>
+						</div>
+						{interviewData.timeLimit && (
+							<div className='w-full flex flex-col justify-start items-start gap-2'>
+								<label htmlFor='time-limit'>Time limit (in minutes)</label>
+								<Input
+									id='time-limit'
+									placeholder='Time Limit (in minutes)'
+									className='w-full'
+									type='number'
+									defaultValue={1}
+									onChange={(e) => {
+										setTimeLimitValue(parseInt(e.target.value));
+									}}
+								/>
+							</div>
+						)}
+					</div>
+					<div className='flex justify-end items-center w-full'>
+						<Button
+							onClick={() => {
+								console.log(interviewData);
+							}}
+						>
+							Start Interview
+						</Button>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
 }
