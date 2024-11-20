@@ -13,30 +13,9 @@ import ShineBorder from '@/components/ui/shine-border';
 import OpenAI from 'openai';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-
-const exampleAnswer = {
-	questions: [
-		{
-			id: 1,
-			type: 'multipleChoice',
-			question: 'What is encapsulation in object-oriented programming?',
-			options: [
-				'A) Combining data and methods into a single unit.',
-				'B) Dividing a program into small functions.',
-				'C) Reusing existing code.',
-				'D) Ensuring data can only be accessed directly.',
-			],
-			correctAnswer: 'A',
-		},
-		{
-			id: 2,
-			type: 'openEnded',
-			question:
-				'Explain why encapsulation is important in software development.',
-			answer: 'answer',
-		},
-	],
-};
+import { useStore } from '../store/index';
+import Link from 'next/link';
+import { exampleAnswer } from '../constants';
 
 const stringInterviewData = (data: {
 	topic: string;
@@ -64,13 +43,16 @@ const getPropmt = (data: {
 };
 
 export default function Home() {
-	const { resolvedTheme } = useTheme();
+	const setFormData = useStore((state) => state.setFormData);
+	const formData = useStore((state) => state.formData);
+	const setQuestionData = useStore((state) => state.setQuestionData);
+	console.log(formData);
 
 	const [interviewData, setInterviewData] = useState({
 		topic: '',
 		questionCount: 5,
-		multipleChoice: false,
-		openEnded: true,
+		multipleChoice: true,
+		openEnded: false,
 		evaluateAnswers: true,
 		showScore: true,
 		showAnswers: false,
@@ -100,10 +82,7 @@ export default function Home() {
 			const response = await client.chat.completions.create({
 				messages: [
 					{ role: 'system', content: '' },
-					{
-						content: prompt,
-						role: 'user',
-					},
+					{ content: prompt, role: 'user' },
 				],
 				model: 'gpt-4o',
 				temperature: 1,
@@ -111,29 +90,65 @@ export default function Home() {
 				top_p: 1,
 			});
 
-			setQuestions(
-				JSON.parse(response.choices[0].message.content || '[]').questions,
-			);
-			console.log(response.choices[0].message.content);
+			// Extract and clean up the response content
+			const content = response.choices[0]?.message?.content?.trim();
+			if (!content) throw new Error('Empty response from API.');
+
+			// Remove potential Markdown code block formatting
+			const cleanedContent = content.replace(/```json|```/g, '').trim();
+
+			let parsedQuestions = [];
+			try {
+				const parsedResponse = JSON.parse(cleanedContent);
+				if (parsedResponse?.questions) {
+					parsedQuestions = parsedResponse.questions;
+				} else {
+					throw new Error('Missing "questions" field in parsed response.');
+				}
+			} catch (parseError) {
+				console.error('Failed to parse JSON:', parseError);
+				throw new Error(
+					'Failed to parse JSON. Ensure the response format is correct.',
+				);
+			}
+
+			// Set the parsed questions
+			setQuestions(parsedQuestions);
+			setQuestionData(parsedQuestions);
+			console.log('Parsed questions:', parsedQuestions);
 			setLoading(false);
 		} catch (error) {
 			console.error('Error:', error);
+			setLoading(false); // Ensure loading state is updated even on error
 		}
 	};
 
+	const words = [
+		'Get Ready With AI.',
+		'Your AI Companion.',
+		'Interview With AI.',
+	];
+
+	const [selectedWord, setSelectedWord] = useState('');
+
+	useEffect(() => {
+		const randomWord = words[Math.floor(Math.random() * words.length)];
+		setSelectedWord(randomWord);
+	}, []);
+
 	return (
-		<div className='w-full flex flex-col justify-center items-center gap-8 mt-10'>
-			<WordFadeIn words='Get Ready With AI.' delay={0.5} />
+		<div className='w-full flex flex-col justify-center items-center gap-8 mt-10 p-4'>
+			<WordFadeIn words={selectedWord} delay={0.5} />
 
 			<div className='max-w-[1280px] w-full flex gap-2 justify-center items-center '>
 				<ShineBorder
-					className='bg-background relative flex max-w-[1280px] w-full flex-col items-center justify-center overflow-hidden rounded-lg border md:shadow-xl'
+					className='bg-background relative flex  max-w-[1280px] w-full flex-col items-center justify-center overflow-hidden rounded-lg border md:shadow-xl'
 					color={['#A07CFE', '#FE8FB5', '#FFBE7B']}
 				>
 					<div
 						className={`
 						relative rounded-lg 
-					p-4 w-full flex flex-col justify-start items-start gap-4`}
+					p-4 max-w-[1280px] w-full flex flex-col justify-start items-start gap-4`}
 					>
 						<div className='flex flex-col justify-start items-start gap-2 w-full'>
 							<label htmlFor='interview-topic' className='font-bold'>
@@ -144,7 +159,6 @@ export default function Home() {
 								id='interview-topic'
 								placeholder='Write your main interview topic here.'
 								className='w-full'
-								rows={1}
 								value={interviewData.topic}
 								onChange={(e) => {
 									setInterviewData({
@@ -160,15 +174,23 @@ export default function Home() {
 							</label>
 							<Input
 								id='number-of-questions'
-								placeholder='Question Count (Default: 5)'
+								placeholder='Question Count (Default: 5 , Max: 20)'
 								className='w-full'
 								type='number'
-								defaultValue={5}
+								max={20}
 								onChange={(e) => {
-									setInterviewData({
-										...interviewData,
-										questionCount: parseInt(e.target.value),
-									});
+									const value = parseInt(e.target.value);
+									if (value <= 20) {
+										setInterviewData({
+											...interviewData,
+											questionCount: value,
+										});
+									} else if (value > 20) {
+										setInterviewData({
+											...interviewData,
+											questionCount: 20,
+										});
+									}
 								}}
 							/>
 						</div>
@@ -332,140 +354,21 @@ export default function Home() {
 									<div className='w-6 h-6 border-2 border-t-[#ffffff] rounded-full animate-spin'></div>
 								</div>
 							)}
-							<Button
-								onClick={() => {
-									ai();
-								}}
-								disabled={loading}
-							>
-								Start Interview
-							</Button>
+							<Link href='/quiz'>
+								<Button
+									onClick={() => {
+										ai();
+										setFormData(interviewData);
+									}}
+									disabled={loading}
+								>
+									Start Interview
+								</Button>
+							</Link>
 						</div>
 					</div>
 				</ShineBorder>
 			</div>
-
-			{/* {
-  "questions": [
-    {
-      "id": 1,
-      "type": "multipleChoice",
-      "question": "What is the 'use strict' directive in JavaScript?",
-      "options": [
-        "A) A feature that prevents the use of ES6",
-        "B) A statement that disables strict mode in the script",
-        "C) A directive that helps in writing better code by throwing errors for unsafe actions",
-        "D) A method for enabling debug mode"
-      ],
-      "correctAnswer": "C"
-    },
-    {
-      "id": 2,
-      "type": "multipleChoice",
-      "question": "In JavaScript, what is a promise?",
-      "options": [
-        "A) A function that executes after all system scripts have loaded",
-        "B) An object that represents the eventual completion or failure of an asynchronous operation",
-        "C) A built-in method to render dynamic content",
-        "D) A library for managing state in an application"
-      ],
-      "correctAnswer": "B"
-    },
-    {
-      "id": 3,
-      "type": "multipleChoice",
-      "question": "Which built-in method combines the text of two strings and returns a new string?",
-      "options": [
-        "A) append()",
-        "B) concat()",
-        "C) attach()",
-        "D) combine()"
-      ],
-      "correctAnswer": "B"
-    },
-    {
-      "id": 4,
-      "type": "openEnded",
-      "question": "Explain the concept of closures in JavaScript.",
-      "answer": "A closure is a feature in JavaScript where an inner function has access to the outer (enclosing) function’s variables — a scope chain. The closure can also access variables in the global scope. This allows for powerful patterns such as data hiding and creating private variables."
-    },
-    {
-      "id": 5,
-      "type": "openEnded",
-      "question": "Why is JavaScript considered single-threaded and what implications does this have for concurrency?",
-      "answer": "JavaScript is considered single-threaded because it has a single call stack, meaning it can only do one thing at a time. However, JavaScript handles concurrency through the event loop, which allows it to perform non-blocking operations like asynchronous callbacks. This implies that while JavaScript can manage multiple tasks, only one task is processed at a time, requiring developers to carefully coordinate asynchronous tasks to ensure smooth performance."
-    }
-  ]
-} */}
-
-			{questions.length > 0 && (
-				<div className='max-w-[1280px] w-full flex gap-2 justify-center items-center '>
-					<ShineBorder
-						className='bg-background relative flex max-w-[1280px] w-full flex-col items-center justify-center overflow-hidden rounded-lg border md:shadow-xl'
-						color={['#A07CFE', '#FE8FB5', '#FFBE7B']}
-					>
-						<div
-							className={`
-						relative rounded-lg 
-					p-4 w-full flex flex-col justify-start items-start gap-4`}
-						>
-							<div className='flex flex-col justify-start items-start gap-2 w-full'>
-								<label htmlFor='interview-topic' className='font-bold'>
-									1. Interview Questions 🤖
-								</label>
-								{questions.map((question: any) => {
-									return (
-										<div
-											key={question.id}
-											className='flex flex-col gap-2 w-full'
-										>
-											<label
-												htmlFor={`question-${question.id}`}
-												className='font-bold'
-											>
-												{question.question}
-											</label>
-											{question.type === 'multipleChoice' && (
-												<RadioGroup
-													defaultValue=''
-													className='flex  gap-2'
-													onValueChange={(value) => {
-														console.log(value);
-													}}
-												>
-													{question.options.map((option: string) => {
-														return (
-															<div
-																key={option}
-																className='flex items-center space-x-2'
-															>
-																<RadioGroupItem value={option} id={option} />
-																<Label htmlFor={option}>{option}</Label>
-															</div>
-														);
-													})}
-												</RadioGroup>
-											)}
-											{question.type === 'openEnded' && (
-												<Textarea
-													id={`question-${question.id}`}
-													placeholder='Write your answer here.'
-													className='w-full'
-													rows={1}
-													value={question.answer}
-													onChange={(e) => {
-														question.answer = e.target.value;
-													}}
-												/>
-											)}
-										</div>
-									);
-								})}
-							</div>
-						</div>
-					</ShineBorder>
-				</div>
-			)}
 		</div>
 	);
 }
