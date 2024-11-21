@@ -17,9 +17,7 @@ function Header() {
 						Interview With AI
 					</h6>
 				</div>
-				<div className='max-md:hidden'>
-					<ModeToggleGroup />
-				</div>
+				<div className='max-md:hidden'>{/* <ModeToggleGroup /> */}</div>
 				<div className=' h-full flex justify-center items-center p-2 m-2 '>
 					<div className='flex justify-center items-center gap-2 '>
 						<div className='flex justify-center items-center text-sm'>
@@ -27,16 +25,20 @@ function Header() {
 								ismetomerkoyuncu
 							</a>
 						</div>
-						<div className='flex justify-center items-center'>
-							<a
-								href='https://github.com/iomerkoyuncu/interview-with-ai'
-								target='_blank'
-							>
-								<GitHubLogoIcon />
-							</a>
-						</div>
+
 						<div className='flex justify-center items-center text-sm'>
 							<p>2024</p>
+						</div>
+						<div
+							className='flex justify-center items-center gap-2 border-2 p-1 border-black rounded-sm cursor-pointer'
+							onClick={() => {
+								window.location.href =
+									'https://github.com/iomerkoyuncu/interview-with-ai';
+							}}
+						>
+							<span className='text-[10px]'> Give a Star on </span>
+
+							<GitHubLogoIcon />
 						</div>
 					</div>
 				</div>

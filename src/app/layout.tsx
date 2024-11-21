@@ -20,23 +20,23 @@ export default function RootLayout({
 	return (
 		<html lang='en'>
 			<body>
-				<ThemeProvider
+				{/* <ThemeProvider
 					attribute='class'
 					defaultTheme='system'
 					enableSystem
 					disableTransitionOnChange
-				>
-					<div className='flex flex-col'>
-						<Header />
-						{children}
-						<VelocityScroll
-							text='Get Ready With AI. Your AI Companion.'
-							default_velocity={2}
-							className='font-display text-center text-4xl font-bold tracking-[-0.02em] text-black drop-shadow-sm md:text-5xl md:leading-[5rem] dark:text-white'
-						/>
-						<Footer />
-					</div>
-				</ThemeProvider>
+				> */}
+				<div className='flex flex-col'>
+					<Header />
+					{children}
+					<VelocityScroll
+						text='Get Ready With AI. Your AI Companion.'
+						default_velocity={2}
+						className='font-display text-center text-4xl font-bold tracking-[-0.02em] text-black drop-shadow-sm md:text-5xl md:leading-[5rem] dark:text-white'
+					/>
+					<Footer />
+				</div>
+				{/* </ThemeProvider> */}
 			</body>
 		</html>
 	);

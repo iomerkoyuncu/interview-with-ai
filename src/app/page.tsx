@@ -46,7 +46,6 @@ export default function Home() {
 	const setFormData = useStore((state) => state.setFormData);
 	const formData = useStore((state) => state.formData);
 	const setQuestionData = useStore((state) => state.setQuestionData);
-	console.log(formData);
 
 	const [interviewData, setInterviewData] = useState({
 		topic: '',
@@ -140,15 +139,21 @@ export default function Home() {
 		<div className='w-full flex flex-col justify-center items-center gap-8 mt-10 p-4'>
 			<WordFadeIn words={selectedWord} delay={0.5} />
 
-			<div className='max-w-[1280px] w-full flex gap-2 justify-center items-center '>
+			<div className='max-w-[1280px] w-full h-full flex gap-2 justify-center items-start '>
 				<ShineBorder
-					className='bg-background relative flex  max-w-[1280px] w-full flex-col items-center justify-center overflow-hidden rounded-lg border md:shadow-xl'
+					className='bg-background relative flex  max-w-[400px] w-full h-full flex-col items-center justify-center overflow-hidden rounded-lg border md:shadow-xl'
+					color={['#A07CFE', '#FE8FB5', '#FFBE7B']}
+				>
+					<div>Your scores will be shown here.</div>
+				</ShineBorder>
+				<ShineBorder
+					className='bg-background relative flex  max-w-[400px] w-full flex-col items-center justify-center overflow-hidden rounded-lg border md:shadow-xl'
 					color={['#A07CFE', '#FE8FB5', '#FFBE7B']}
 				>
 					<div
 						className={`
 						relative rounded-lg 
-					p-4 max-w-[1280px] w-full flex flex-col justify-start items-start gap-4`}
+					p-4  w-full flex flex-col justify-start items-start gap-4`}
 					>
 						<div className='flex flex-col justify-start items-start gap-2 w-full'>
 							<label htmlFor='interview-topic' className='font-bold'>
@@ -271,7 +276,9 @@ export default function Home() {
 											});
 										}}
 									></Checkbox>
-									<label htmlFor='multiple-choice'>Evaluate my answers. </label>
+									<label htmlFor='multiple-choice'>
+										Evaluate my answers at the end.{' '}
+									</label>
 								</div>
 								<div className='flex justify-start items-center gap-2'>
 									<Checkbox
@@ -306,6 +313,7 @@ export default function Home() {
 								<div className='flex justify-start items-center gap-2'>
 									<Checkbox
 										id='skipQuestions'
+										disabled={interviewData.timeLimit}
 										checked={interviewData.skipQuestions}
 										onCheckedChange={() => {
 											setInterviewData({
@@ -358,7 +366,12 @@ export default function Home() {
 								<Button
 									onClick={() => {
 										ai();
-										setFormData(interviewData);
+										setFormData({
+											...interviewData,
+											timeLimit: interviewData.timeLimit
+												? timeLimitValue * 60
+												: false,
+										});
 									}}
 									disabled={loading}
 								>
