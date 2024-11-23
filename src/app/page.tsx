@@ -4,11 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Checkbox } from '../components/ui/checkbox';
-import { Textarea } from '../components/ui/textarea';
 import WordFadeIn from '@/components/ui/word-fade-in';
-import { ModeToggleGroup } from '../components/ui/toggleDarkMode';
-import { useTheme } from 'next-themes';
-import { BorderBeam } from '@/components/ui/border-beam';
 import ShineBorder from '@/components/ui/shine-border';
 import OpenAI from 'openai';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -16,30 +12,26 @@ import { Label } from '@/components/ui/label';
 import { useStore } from '../store/index';
 import Link from 'next/link';
 import { exampleAnswer } from '../constants';
+import { Slider } from '../components/ui/slider';
 
 const stringInterviewData = (data: {
 	topic: string;
 	questionCount: number;
-	multipleChoice: boolean;
-	openEnded: boolean;
 	difficulty: string;
 }) => {
-	return `{"topic": "${data.topic}","questionCount": ${data.questionCount},	"multipleChoice": ${data.multipleChoice},"openEnded": ${data.openEnded},	"difficulty": "${data.difficulty}"`;
+	return `{"topic": "${data.topic}","questionCount": ${data.questionCount},	"difficulty": "${data.difficulty}"`;
 };
 
 const getPropmt = (data: {
 	topic: string;
 	questionCount: number;
-	multipleChoice: boolean;
-	openEnded: boolean;
-	evaluateAnswers: boolean;
 	difficulty: string;
 }) => {
 	return ` ${stringInterviewData(
 		data,
-	)} Give me the questions according to these parameters and answer me as json like this: ${JSON.stringify(
+	)} Give me the questions according to these parameters and answer me as json exactly like this: ${JSON.stringify(
 		exampleAnswer,
-	)} Also answer in language which topic's written. Write the answers as shown in the example for both question types. `;
+	)} Also answer in language which topic's written. Write the answers as shown in the example.`;
 };
 
 export default function Home() {
@@ -50,8 +42,6 @@ export default function Home() {
 	const [interviewData, setInterviewData] = useState({
 		topic: '',
 		questionCount: 5,
-		multipleChoice: true,
-		openEnded: false,
 		evaluateAnswers: true,
 		showScore: true,
 		showAnswers: false,
@@ -140,12 +130,12 @@ export default function Home() {
 			<WordFadeIn words={selectedWord} delay={0.5} />
 
 			<div className='max-w-[1280px] w-full h-full flex gap-2 justify-center items-start '>
-				<ShineBorder
+				{/* <ShineBorder
 					className='bg-background relative flex  max-w-[400px] w-full h-full flex-col items-center justify-center overflow-hidden rounded-lg border md:shadow-xl'
 					color={['#A07CFE', '#FE8FB5', '#FFBE7B']}
 				>
 					<div>Your scores will be shown here.</div>
-				</ShineBorder>
+				</ShineBorder> */}
 				<ShineBorder
 					className='bg-background relative flex  max-w-[400px] w-full flex-col items-center justify-center overflow-hidden rounded-lg border md:shadow-xl'
 					color={['#A07CFE', '#FE8FB5', '#FFBE7B']}
@@ -153,16 +143,16 @@ export default function Home() {
 					<div
 						className={`
 						relative rounded-lg 
-					p-4  w-full flex flex-col justify-start items-start gap-4`}
+					p-8  w-full flex flex-col justify-start items-start gap-4`}
 					>
 						<div className='flex flex-col justify-start items-start gap-2 w-full'>
 							<label htmlFor='interview-topic' className='font-bold'>
 								1. Interview Topic 👀
 							</label>
 
-							<Textarea
+							<Input
 								id='interview-topic'
-								placeholder='Write your main interview topic here.'
+								placeholder='Ask me about. . . 🤔'
 								className='w-full'
 								value={interviewData.topic}
 								onChange={(e) => {
@@ -173,29 +163,23 @@ export default function Home() {
 								}}
 							/>
 						</div>
+
 						<div className='w-full flex flex-col justify-start items-start gap-2'>
 							<label htmlFor='number-of-questions' className='font-bold'>
-								2. Number of Questions 🤔
+								2. Number of Questions 📚
 							</label>
-							<Input
-								id='number-of-questions'
-								placeholder='Question Count (Default: 5 , Max: 20)'
-								className='w-full'
-								type='number'
+							<Slider
+								showSteps='full'
+								min={5}
 								max={20}
-								onChange={(e) => {
-									const value = parseInt(e.target.value);
-									if (value <= 20) {
-										setInterviewData({
-											...interviewData,
-											questionCount: value,
-										});
-									} else if (value > 20) {
-										setInterviewData({
-											...interviewData,
-											questionCount: 20,
-										});
-									}
+								className='my-2'
+								formatLabel={(value) => `${value} questions`}
+								value={[interviewData.questionCount]}
+								onValueChange={(value) => {
+									setInterviewData({
+										...interviewData,
+										questionCount: value[0],
+									});
 								}}
 							/>
 						</div>
@@ -230,71 +214,8 @@ export default function Home() {
 							</div>
 						</div>
 						<div className='flex w-full flex-col gap-2 justify-start items-start'>
-							<span className='text-left w-full font-bold'>
-								4. Choose the type of questions. 👽
-							</span>
-							<div className='flex gap-2'>
-								<div className='flex justify-center items-center gap-2'>
-									<Checkbox
-										id='multiple-choice'
-										checked={interviewData.multipleChoice}
-										onCheckedChange={() => {
-											setInterviewData({
-												...interviewData,
-												multipleChoice: !interviewData.multipleChoice,
-											});
-										}}
-									></Checkbox>
-									<label htmlFor='multiple-choice'>Multiple Choice</label>
-								</div>
-								<div className='flex justify-center items-center gap-2'>
-									<Checkbox
-										id='open-ended'
-										checked={interviewData.openEnded}
-										onCheckedChange={() => {
-											setInterviewData({
-												...interviewData,
-												openEnded: !interviewData.openEnded,
-											});
-										}}
-									></Checkbox>
-									<label htmlFor='open-ended'>Open Ended</label>
-								</div>
-							</div>
-						</div>
-						<div className='flex w-full flex-col gap-2 justify-start items-start'>
 							<span className=' w-full font-bold'>5. Interview Options 🍀</span>
 							<div className='flex flex-col gap-2'>
-								<div className='flex justify-start items-center gap-2'>
-									<Checkbox
-										id='multiple-choice'
-										checked={interviewData.evaluateAnswers}
-										onCheckedChange={() => {
-											setInterviewData({
-												...interviewData,
-												evaluateAnswers: !interviewData.evaluateAnswers,
-											});
-										}}
-									></Checkbox>
-									<label htmlFor='multiple-choice'>
-										Evaluate my answers at the end.{' '}
-									</label>
-								</div>
-								<div className='flex justify-start items-center gap-2'>
-									<Checkbox
-										id='showScore'
-										checked={interviewData.showScore}
-										onCheckedChange={() => {
-											setInterviewData({
-												...interviewData,
-												showScore: !interviewData.showScore,
-											});
-										}}
-									></Checkbox>
-									<label htmlFor='showScore'>
-										Show my total score at the end.
-									</label>
-								</div>
 								<div className='flex justify-start items-center gap-2'>
 									<Checkbox
 										id='showAnswers'
@@ -312,22 +233,6 @@ export default function Home() {
 								</div>
 								<div className='flex justify-start items-center gap-2'>
 									<Checkbox
-										id='skipQuestions'
-										disabled={interviewData.timeLimit}
-										checked={interviewData.skipQuestions}
-										onCheckedChange={() => {
-											setInterviewData({
-												...interviewData,
-												skipQuestions: !interviewData.skipQuestions,
-											});
-										}}
-									></Checkbox>
-									<label htmlFor='skipQuestions'>
-										Allow going back to previous questions.
-									</label>
-								</div>
-								<div className='flex justify-start items-center gap-2'>
-									<Checkbox
 										id='timeLimit'
 										checked={interviewData.timeLimit}
 										onCheckedChange={() => {
@@ -339,42 +244,68 @@ export default function Home() {
 									></Checkbox>
 									<label htmlFor='timeLimit'>Time limit per question</label>
 								</div>
-							</div>
-							{interviewData.timeLimit && (
-								<div className='w-full flex flex-col justify-start items-start gap-2'>
-									<label htmlFor='time-limit'>Time limit (in minutes)</label>
-									<Input
-										id='time-limit'
-										placeholder='Time Limit (in minutes)'
-										className='w-full'
-										type='number'
-										defaultValue={1}
-										onChange={(e) => {
-											setTimeLimitValue(parseInt(e.target.value));
+								{interviewData.timeLimit && (
+									<div className='w-full flex flex-col justify-start items-start gap-2'>
+										<label htmlFor='time-limit'>Time limit (in minutes)</label>
+										<Slider
+											showSteps='full'
+											min={1}
+											max={10}
+											className='my-2'
+											formatLabel={(value) => `${value} minutes`}
+											value={[timeLimitValue]}
+											onValueChange={(value) => {
+												setTimeLimitValue(value[0]);
+											}}
+										/>
+									</div>
+								)}
+								<div className='flex justify-start items-center gap-2'>
+									<Checkbox
+										id='skipQuestions'
+										disabled={interviewData.timeLimit}
+										checked={interviewData.skipQuestions}
+										onCheckedChange={() => {
+											setInterviewData({
+												...interviewData,
+												skipQuestions: !interviewData.skipQuestions,
+											});
 										}}
-									/>
+									></Checkbox>
+									<label
+										htmlFor='skipQuestions'
+										className={`${
+											interviewData.timeLimit ? 'line-through' : ''
+										}`}
+									>
+										Allow going back to previous questions.
+									</label>
 								</div>
-							)}
+							</div>
 						</div>
-						<div className='flex flex-row justify-end items-center w-full gap-2'>
-							{loading && (
-								<div className='flex justify-center items-center gap-2'>
-									<div className='w-6 h-6 border-2 border-t-[#ffffff] rounded-full animate-spin'></div>
-								</div>
-							)}
-							<Link href='/quiz'>
+						<div className='flex flex-row justify-center items-center w-full gap-2'>
+							<Link href='/quiz' className='w-full'>
 								<Button
+									className='w-full flex flex-row gap-2'
 									onClick={() => {
 										ai();
 										setFormData({
 											...interviewData,
-											timeLimit: interviewData.timeLimit
-												? timeLimitValue * 60
-												: false,
+											skipQuestions: interviewData.timeLimit
+												? false
+												: interviewData.skipQuestions,
+											timeLimitValue: interviewData.timeLimit
+												? timeLimitValue
+												: null,
 										});
 									}}
-									disabled={loading}
+									disabled={loading || !interviewData.topic}
 								>
+									{loading && (
+										<div className='flex justify-center items-center gap-2'>
+											<div className='w-6 h-6 border-2 border-t-[#ffffff] rounded-full animate-spin'></div>
+										</div>
+									)}
 									Start Interview
 								</Button>
 							</Link>

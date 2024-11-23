@@ -29,11 +29,13 @@ export default function RootLayout({
 				<div className='flex flex-col'>
 					<Header />
 					{children}
-					<VelocityScroll
-						text='Get Ready With AI. Your AI Companion.'
-						default_velocity={2}
-						className='font-display text-center text-4xl font-bold tracking-[-0.02em] text-black drop-shadow-sm md:text-5xl md:leading-[5rem] dark:text-white'
-					/>
+					<div className='w-full mt-8'>
+						<VelocityScroll
+							text='Get Ready With AI. Your AI Companion.'
+							default_velocity={2}
+							className='font-display text-center text-4xl font-bold tracking-[-0.02em] text-black drop-shadow-sm md:text-5xl md:leading-[5rem] dark:text-white'
+						/>
+					</div>
 					<Footer />
 				</div>
 				{/* </ThemeProvider> */}

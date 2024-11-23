@@ -12,12 +12,5 @@ export const exampleAnswer = {
 			],
 			correctAnswer: 'A',
 		},
-		{
-			id: 2,
-			type: 'openEnded',
-			question:
-				'Explain why encapsulation is important in software development.',
-			answer: 'answer',
-		},
 	],
 };
