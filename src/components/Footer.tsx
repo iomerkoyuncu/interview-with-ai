@@ -6,14 +6,14 @@ import { ModeToggleGroup } from './ui/toggleDarkMode';
 function Footer() {
 	return (
 		<footer className='h-24 w-full p-3 mt-3'>
-			<div className='w-4/5 container mx-auto h-full flex-wrap max-sm:justify-center flex items-center justify-between'>
+			<div className='w-4/5 container mx-auto h-full flex-wrap max-[700px]:justify-center flex items-center justify-between'>
 				<div
 					className='text-2xl font-semibold cursor-pointer'
 					onClick={() => {
 						window.location.href = '/';
 					}}
 				>
-					<h6 className='text-2xl font-semibold cursor-pointer max-sm:text-sm p-2'>
+					<h6 className='text-2xl font-semibold cursor-pointer max-[700px]:text-sm p-2'>
 						Interview With AI
 					</h6>
 				</div>

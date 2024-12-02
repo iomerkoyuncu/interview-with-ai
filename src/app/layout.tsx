@@ -6,6 +6,9 @@ import { ModeToggleGroup } from '../components/ui/toggleDarkMode';
 import Header from '@/components/Header';
 import { VelocityScroll } from '@/components/ui/scroll-based-velocity';
 import Footer from '@/components/Footer';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+ 
 
 export const metadata: Metadata = {
 	title: 'Interview With AI',
@@ -29,15 +32,11 @@ export default function RootLayout({
 				<div className='flex flex-col'>
 					<Header />
 					{children}
-					<div className='w-full mt-8'>
-						<VelocityScroll
-							text='Get Ready With AI. Your AI Companion.'
-							default_velocity={2}
-							className='font-display text-center text-4xl font-bold tracking-[-0.02em] text-black drop-shadow-sm md:text-5xl md:leading-[5rem] dark:text-white'
-						/>
-					</div>
-					<Footer />
+
+					{/* <Footer /> */}
 				</div>
+				<ToastContainer />
+
 				{/* </ThemeProvider> */}
 			</body>
 		</html>
