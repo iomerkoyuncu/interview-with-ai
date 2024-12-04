@@ -27,12 +27,14 @@ function Quiz() {
 
 	const handleCountdownComplete = () => {
 		if (currentQuestionIndex < questionData.length - 1) {
-			setAnswers({
-				...answers,
-				[questionData[currentQuestionIndex].id]: {
-					answer: '',
-				},
-			});
+			if (!answers[questionData[currentQuestionIndex].id]) {
+				setAnswers({
+					...answers,
+					[questionData[currentQuestionIndex].id]: {
+						answer: '',
+					},
+				});
+			}
 			setCurrentQuestionIndex((prev) => prev + 1);
 			setCurrentCountdownKey((prevKey) => prevKey + 1); // Countdown'ı resetle
 		} else {
