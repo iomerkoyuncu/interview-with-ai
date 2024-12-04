@@ -367,15 +367,9 @@ export default function Home() {
 					/>
 				</div>
 			</div>
-
-			<Modal
-				open={open}
-				onClose={() => setOpen(false)}
-				aria-labelledby='modal-modal-title'
-				aria-describedby='modal-modal-description'
-			>
+			<Modal open={open} onClose={() => setOpen(false)}>
 				<div className='w-full h-full flex justify-center items-center'>
-					<div className='bg-background flex flex-col gap-4 p-8 w-[800px] h-[600px] overflow-auto'>
+					<div className='bg-background flex flex-col gap-4 p-8 w-4/5 h-4/5 overflow-auto'>
 						<button onClick={() => setOpen(false)} className=''>
 							Close
 						</button>
@@ -389,8 +383,8 @@ export default function Home() {
 											{selectedQuiz.formData.topic}
 										</h2>
 										<p>
-											{selectedQuiz.formData.questionCount} questions -{' '}
-											{selectedQuiz.formData.difficulty}
+											{selectedQuiz.formData.questionCount} Questions -{' '}
+											{selectedQuiz.formData.difficulty.toUpperCase()}
 										</p>
 									</>
 								)}
@@ -417,13 +411,36 @@ export default function Home() {
 													);
 												})}
 											</ul>
-											<p>
-												Answer:
-												{question.correctAnswer}
-											</p>
 										</div>
 									);
 								})}
+							<div className='flex flex-wrap gap-2'>
+								<span>Answers:</span>
+								{selectedQuiz &&
+									selectedQuiz.questions &&
+									selectedQuiz.questions.map((question: any, index: number) => {
+										return (
+											<div key={index} className='flex flex-wrap  gap-2'>
+												<p>
+													{index}){' '}
+													<span
+														className={` font-bold
+												${
+													selectedQuiz.answers[index].answer ===
+													question.correctAnswer
+														? 'text-green-500'
+														: 'text-red-500	'
+												}
+														`}
+													>
+														{' '}
+														{question.correctAnswer}
+													</span>
+												</p>
+											</div>
+										);
+									})}
+							</div>
 						</div>
 					</div>
 				</div>

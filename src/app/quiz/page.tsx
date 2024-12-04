@@ -208,20 +208,24 @@ function Quiz() {
 						</div>
 					</ShineBorder>
 				</div>
-			) : (
-				isloading && (
-					<div className='flex flex-col gap-4 items-center justify-center'>
-						<h1 className='text-2xl font-bold'>
-							Questions will be displayed here.
-						</h1>
-						<h1 className='text-1xl '>
-							This can take a few seconds. Please wait.
-						</h1>
-						<div className='flex justify-center items-center gap-2'>
-							<div className='w-6 h-6 border-2 border-t-[#ffffff] rounded-full animate-spin'></div>
-						</div>
+			) : isloading ? (
+				<div className='flex flex-col gap-4 items-center justify-center'>
+					<h1 className='text-2xl font-bold'>
+						Questions will be displayed here.
+					</h1>
+					<h1 className='text-1xl '>
+						This can take a few seconds. Please wait.
+					</h1>
+					<div className='flex justify-center items-center gap-2'>
+						<div className='w-6 h-6 border-2 border-t-[#ffffff] rounded-full animate-spin'></div>
 					</div>
-				)
+				</div>
+			) : (
+				<div className='flex flex-col gap-4 items-center justify-center'>
+					<h1 className='text-2xl font-bold'>
+						No questions found. Please go back and try again.
+					</h1>
+				</div>
 			)}
 		</div>
 	);
