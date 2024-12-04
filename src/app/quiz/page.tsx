@@ -121,7 +121,6 @@ function Quiz() {
 
 									<div className=''>
 										<RadioGroup
-											defaultValue=''
 											className='flex flex-col gap-4'
 											onValueChange={(value) => {
 												setAnswers({
@@ -182,8 +181,7 @@ function Quiz() {
 											onClick={() =>
 												currentQuestionIndex === questionData.length - 1
 													? handleSubmission()
-													: (setShowAnswer(false),
-													  setCurrentQuestionIndex((prev) => prev + 1))
+													: (setShowAnswer(false), handleCountdownComplete())
 											}
 										>
 											{currentQuestionIndex === questionData.length - 1
