@@ -1,5 +1,11 @@
 # Interview with AI
 
+[Live Version](https://interview-with-ai-iomerkoyuncu.vercel.app/)
+
+![Screenshot](/src/assets/ss-1.png)
+![Screenshot](/src/assets/ss-2.png)
+![Screenshot](/src/assets/ss-3.png)
+
 ## Introduction
 
 This project aims to create an interactive interview experience with an AI. The AI can answer questions, provide information, and simulate a quiz.
