@@ -44,13 +44,24 @@ export default function Home() {
 	const router = useRouter();
 
 	const setFormData = useStore((state) => state.setFormData);
-	const formData = useStore((state) => state.formData);
 	const setQuestionData = useStore((state) => state.setQuestionData);
 	const setIsLoading = useStore((state) => state.setIsLoading);
 	const isLoading = useStore((state) => state.isLoading);
-	const takenQuizzes = JSON.parse(localStorage.getItem('takenQuizzes') || '[]');
+	const [takenQuizzes, setTakenQuizzes] = useState([]);
 	const [open, setOpen] = useState(false);
-	const [selectedQuiz, setSelectedQuiz] = useState<any>(null);
+	interface Quiz {
+		formData: {
+			topic: string;
+			questionCount: number;
+			difficulty: string;
+		};
+		questions: { question: string; options: string[]; answer: string }[];
+		answers: { answer: string }[];
+		score: number;
+		date: string;
+	}
+
+	const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
 
 	const [interviewData, setInterviewData] = useState({
 		topic: '',
@@ -63,15 +74,24 @@ export default function Home() {
 		difficulty: 'medium',
 	});
 	const [timeLimitValue, setTimeLimitValue] = useState(1);
-	const [questions, setQuestions] = useState<any[]>([]);
 
 	const [prompt, setPrompt] = useState('');
+
+	useEffect(() => {
+		// Check if `localStorage` is available
+		if (typeof window !== 'undefined') {
+			const storedQuizzes = JSON.parse(
+				localStorage.getItem('takenQuizzes') || '[]',
+			);
+			setTakenQuizzes(storedQuizzes);
+		}
+	}, []);
 
 	useEffect(() => {
 		setPrompt(getPropmt(interviewData));
 	}, [interviewData]);
 
-	const getRequestWithBody = async (url: string, data: any) => {
+	const getRequestWithBody = async (url: string, data: { prompt: string }) => {
 		try {
 			const response = await axios({
 				method: 'post',
@@ -100,7 +120,6 @@ export default function Home() {
 			if (response) {
 				const data = response.data;
 				setQuestionData(data);
-				setQuestions(data);
 			}
 		} catch (error) {
 			console.error('Error:', error);
@@ -138,7 +157,7 @@ export default function Home() {
 									{takenQuizzes
 										.slice(takenQuizzes.length - 5, takenQuizzes.length)
 										.reverse()
-										.map((quiz: any, index: number) => {
+										.map((quiz: Quiz, index: number) => {
 											return (
 												<div
 													key={index}
@@ -390,30 +409,41 @@ export default function Home() {
 								)}
 							{selectedQuiz &&
 								selectedQuiz.questions &&
-								selectedQuiz.questions.map((question: any, index: number) => {
-									return (
-										<div key={index} className='flex flex-col gap-2'>
-											<h3 className='font-bold'>
-												{index + 1}. {question.question}
-											</h3>
-											<ul>
-												{question.options.map((option: any, index: number) => {
-													return (
-														<li key={index}>
-															{option}
-															{question.answer === option && (
-																<span className='text-green-500'>
-																	{' '}
-																	- Correct
-																</span>
-															)}
-														</li>
-													);
-												})}
-											</ul>
-										</div>
-									);
-								})}
+								selectedQuiz.questions.map(
+									(
+										question: {
+											question: string;
+											options: string[];
+											answer: string;
+										},
+										index: number,
+									) => {
+										return (
+											<div key={index} className='flex flex-col gap-2'>
+												<h3 className='font-bold'>
+													{index + 1}. {question.question}
+												</h3>
+												<ul>
+													{question.options.map(
+														(option: string, index: number) => {
+															return (
+																<li key={index}>
+																	{option}
+																	{question.answer === option && (
+																		<span className='text-green-500'>
+																			{' '}
+																			- Correct
+																		</span>
+																	)}
+																</li>
+															);
+														},
+													)}
+												</ul>
+											</div>
+										);
+									},
+								)}
 							<div className='flex flex-wrap gap-2'>
 								<span>Answers:</span>
 								{selectedQuiz &&

@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
-import { ModeToggleGroup } from './ui/toggleDarkMode';
 
 function Header() {
 	return (
@@ -17,7 +16,6 @@ function Header() {
 						Interview With AI
 					</h6>
 				</div>
-				<div className='max-md:hidden'>{/* <ModeToggleGroup /> */}</div>
 				<div className=' h-full flex  justify-center items-center p-2 m-2 '>
 					<div className='flex flex-wrap justify-center items-center gap-2 '>
 						<div className='flex justify-center items-center text-sm'>
