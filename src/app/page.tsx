@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -14,11 +13,12 @@ import { exampleAnswer } from '../constants';
 import { Slider } from '../components/ui/slider';
 import { VelocityScroll } from '@/components/ui/scroll-based-velocity';
 import axios from 'axios';
-import AnimatedCircularProgressBar from '../components/animated-circular-progress-bar';
+import AnimatedCircularProgressBar from '../components/ui/animated-circular-progress-bar';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import { Eye } from 'lucide-react';
-import { Modal, IconButton } from '@mui/material';
+import { IconButton } from '@mui/material';
+import ResultModal from '../components/ResultModal';
 
 const stringInterviewData = (data: {
 	topic: string;
@@ -386,95 +386,7 @@ export default function Home() {
 					/>
 				</div>
 			</div>
-			<Modal open={open} onClose={() => setOpen(false)}>
-				<div className='w-full h-full flex justify-center items-center'>
-					<div className='bg-background flex flex-col gap-4 p-8 w-4/5 h-4/5 overflow-auto'>
-						<button onClick={() => setOpen(false)} className=''>
-							Close
-						</button>
-						<div className='flex flex-col gap-4'>
-							{selectedQuiz &&
-								selectedQuiz.formData.topic &&
-								selectedQuiz.formData.questionCount &&
-								selectedQuiz.formData.difficulty && (
-									<>
-										<h2 className='text-xl font-bold'>
-											{selectedQuiz.formData.topic}
-										</h2>
-										<p>
-											{selectedQuiz.formData.questionCount} Questions -{' '}
-											{selectedQuiz.formData.difficulty.toUpperCase()}
-										</p>
-									</>
-								)}
-							{selectedQuiz &&
-								selectedQuiz.questions &&
-								selectedQuiz.questions.map(
-									(
-										question: {
-											question: string;
-											options: string[];
-											answer: string;
-										},
-										index: number,
-									) => {
-										return (
-											<div key={index} className='flex flex-col gap-2'>
-												<h3 className='font-bold'>
-													{index + 1}. {question.question}
-												</h3>
-												<ul>
-													{question.options.map(
-														(option: string, index: number) => {
-															return (
-																<li key={index}>
-																	{option}
-																	{question.answer === option && (
-																		<span className='text-green-500'>
-																			{' '}
-																			- Correct
-																		</span>
-																	)}
-																</li>
-															);
-														},
-													)}
-												</ul>
-											</div>
-										);
-									},
-								)}
-							<div className='flex flex-wrap gap-2'>
-								<span>Answers:</span>
-								{selectedQuiz &&
-									selectedQuiz.questions &&
-									selectedQuiz.questions.map((question: any, index: number) => {
-										return (
-											<div key={index} className='flex flex-wrap  gap-2'>
-												<p>
-													{index}){' '}
-													<span
-														className={` font-bold
-												${
-													selectedQuiz.answers[index].answer ===
-													question.correctAnswer
-														? 'text-green-500'
-														: 'text-red-500	'
-												}
-														`}
-													>
-														{' '}
-														{question.correctAnswer}
-													</span>
-												</p>
-											</div>
-										);
-									})}
-							</div>
-						</div>
-					</div>
-				</div>
-			</Modal>
+			<ResultModal open={open} setOpen={setOpen} selectedQuiz={selectedQuiz} />
 		</>
 	);
 }
