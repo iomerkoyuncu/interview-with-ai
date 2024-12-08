@@ -10,9 +10,11 @@ type Props = {
 	label: string;
 	htmlFor: string;
 	className: string;
-	placeholder?: string;
-	labelClassName?: any;
 	disabled?: boolean;
+	sliderMin?: number;
+	sliderMax?: number;
+	labelClassName?: any;
+	placeholder?: string;
 	onChange: (e: any) => void;
 };
 
@@ -22,10 +24,12 @@ function CustomInput({
 	value,
 	htmlFor,
 	disabled,
+	onChange,
 	className,
+	sliderMax,
+	sliderMin,
 	placeholder,
 	labelClassName,
-	onChange,
 }: Props) {
 	if (type === 'input') {
 		return (
@@ -52,10 +56,11 @@ function CustomInput({
 				<Slider
 					id={htmlFor}
 					showSteps='full'
-					min={5}
-					max={20}
+					min={sliderMin}
+					max={sliderMax}
 					className='my-2'
-					formatLabel={(value) => `${value} questions`}
+					formatLabel={(value) => `${value} 
+					${label === 'Time limit (in minutes)' ? 'minutes' : 'questions'}`}
 					value={[value]}
 					onValueChange={(value) => {
 						onChange(value);

@@ -19,16 +19,19 @@ interface Quiz {
 
 type Props = {
 	takenQuizzes: Quiz[];
+	timeLimit: boolean;
 };
 
-function PreviousQuizzes({ takenQuizzes }: Props) {
+function PreviousQuizzes({ takenQuizzes, timeLimit }: Props) {
 	const [open, setOpen] = React.useState(false);
 	const [selectedQuiz, setSelectedQuiz] = React.useState<Quiz | null>(null);
 
 	return (
 		<>
 			<ShineBorder
-				className='bg-background relative flex  max-w-[400px] w-full h-[480px]  flex-col items-center justify-start rounded-lg border md:shadow-xl'
+				className={`${
+					!timeLimit ? 'h-[472px]' : 'h-[542px]'
+				} bg-background relative flex  max-w-[400px] w-full   flex-col items-center justify-start rounded-lg border md:shadow-xl`}
 				color={['#A07CFE', '#FE8FB5', '#FFBE7B']}
 			>
 				<div className='flex flex-col justify-center items-center  gap-2 p-5 w-full'>
