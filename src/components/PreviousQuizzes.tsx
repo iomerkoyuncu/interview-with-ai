@@ -30,7 +30,7 @@ function PreviousQuizzes({ takenQuizzes, timeLimit }: Props) {
 		<>
 			<ShineBorder
 				className={`${
-					!timeLimit ? 'h-[472px]' : 'h-[542px]'
+					!timeLimit ? 'h-[432px]' : 'h-[502px]'
 				} bg-background relative flex  max-w-[400px] w-full   flex-col items-center justify-start rounded-lg border md:shadow-xl`}
 				color={['#A07CFE', '#FE8FB5', '#FFBE7B']}
 			>

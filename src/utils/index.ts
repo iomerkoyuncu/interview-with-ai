@@ -52,14 +52,14 @@ export const utils = {
 			htmlFor: 'time-limit',
 			className: 'my-2',
 		},
-		{
-			id: 'skipQuestions',
-			type: 'checkbox',
-			label: 'Allow going back to previous questions.',
-			htmlFor: 'skipQuestions',
-			className: 'w-full',
-			labelClassName: `${interviewData.timeLimit ? 'line-through' : ''}`,
-		},
+		// {
+		// 	id: 'skipQuestions',
+		// 	type: 'checkbox',
+		// 	label: 'Allow going back to previous questions.',
+		// 	htmlFor: 'skipQuestions',
+		// 	className: 'w-full',
+		// 	labelClassName: `${interviewData.timeLimit ? 'line-through' : ''}`,
+		// },
 	],
 	stringInterviewData: (data: {
 		topic: string;

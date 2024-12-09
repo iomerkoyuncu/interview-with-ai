@@ -42,10 +42,6 @@ function Quiz() {
 		}
 	};
 
-	useEffect(() => {
-		setCurrentCountdownKey((prevKey) => prevKey + 1);
-	}, [currentQuestionIndex]);
-
 	const handleSubmission = () => {
 		const answersArray = Object.values(answers);
 		const correctAnswers = questionData.map((question) => {
@@ -81,6 +77,10 @@ function Quiz() {
 		setAnswers({});
 		setQuestionData([]);
 	};
+
+	useEffect(() => {
+		setCurrentCountdownKey((prevKey) => prevKey + 1);
+	}, [currentQuestionIndex]);
 
 	return (
 		<div className='w-full flex justify-center items-center p-4'>
@@ -124,11 +124,16 @@ function Quiz() {
 									<div className=''>
 										<RadioGroup
 											className='flex flex-col gap-4'
+											// value={
+											// 	answers[questionData[currentQuestionIndex].id]
+											// 		?.answer || ''
+											// }
 											onValueChange={(value) => {
+												const answer = value.toString()[0].toUpperCase();
 												setAnswers({
 													...answers,
 													[questionData[currentQuestionIndex].id]: {
-														answer: value[0],
+														answer: answer,
 													},
 												});
 											}}

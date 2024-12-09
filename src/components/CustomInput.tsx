@@ -42,7 +42,7 @@ function CustomInput({
 					id={htmlFor}
 					placeholder={placeholder}
 					className={className}
-					value={value}
+					value={String(value)}
 					onChange={onChange}
 				/>
 			</div>
@@ -78,6 +78,7 @@ function CustomInput({
 					<RadioGroup
 						id={htmlFor}
 						defaultValue='medium'
+						value={value}
 						className='flex gap-2'
 						onValueChange={(value) => {
 							onChange(value);

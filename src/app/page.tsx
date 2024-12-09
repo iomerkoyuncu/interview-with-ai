@@ -44,7 +44,7 @@ export default function Home() {
 		showAnswers: false,
 		timeLimit: false,
 		skipQuestions: false,
-		difficulty: 'medium',
+		difficulty: 'Medium',
 	});
 
 	const words = [
@@ -115,6 +115,7 @@ export default function Home() {
 						>
 							<div className='w-full flex flex-col gap-4'>
 								{utils.createFields(interviewData).map((field) => {
+									console.log(interviewData[field.id as keyof InterviewData]);
 									if (field.id === 'timeLimitValue' && !interviewData.timeLimit)
 										return null;
 									return (
@@ -145,8 +146,7 @@ export default function Home() {
 													: field.type === 'radio'
 													? setInterviewData({
 															...interviewData,
-															[field.id as keyof InterviewData]:
-																!interviewData[field.id as keyof InterviewData],
+															[field.id as keyof InterviewData]: e,
 													  })
 													: setInterviewData({
 															...interviewData,
@@ -176,7 +176,11 @@ export default function Home() {
 													: null,
 											});
 										}}
-										disabled={isLoading || !interviewData.topic}
+										disabled={
+											isLoading ||
+											!interviewData.topic ||
+											!interviewData.difficulty
+										}
 									>
 										{isLoading && (
 											<div className='flex justify-center items-center gap-2'>

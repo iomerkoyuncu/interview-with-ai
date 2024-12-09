@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
 const service = {
 	async get() {
 		return 'Hello World';
@@ -16,6 +17,8 @@ const service = {
 			return response;
 		} catch (error) {
 			console.error('Error:', error);
+			window.location.href = '/';
+			toast.error('Error fetching questions. Please try again later.');
 		}
 	},
 };
