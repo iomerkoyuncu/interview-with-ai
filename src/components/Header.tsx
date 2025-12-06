@@ -19,7 +19,7 @@ function Header() {
 				<div className=' h-full flex  justify-center items-center p-2 m-2 '>
 					<div className='flex flex-wrap justify-center items-center gap-2 '>
 						<div className='flex justify-center items-center text-sm'>
-							<a href='https://ismetomerkoyuncu.tech' target='_blank'>
+							<a href='https://ismetomerkoyuncu.com' target='_blank'>
 								ismetomerkoyuncu
 							</a>
 						</div>
